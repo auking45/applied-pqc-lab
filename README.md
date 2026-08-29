@@ -33,6 +33,9 @@ applied-pqc-lab/
 │   └── workflows/
 │       ├── test.yml            # Docker 기반 PQC 툴체인 및 E2E 테스트 검증 파이프라인
 │       └── docs.yml            # MkDocs 문서 빌드 무결성 검증 및 GitHub Pages 배포
+├── .harness/                   # 아티클 스캐폴딩 및 작성 규격 린트 하네스 도구
+│   ├── harness.py              # CLI 하네스 메인 도구 (new, lint, test)
+│   └── templates/              # 표준 마크다운(한/영) 및 C++/Rust/CLI 템플릿
 ├── docker/
 │   ├── Dockerfile.lab          # OpenSSL 3.5+ & Rust/C++ 통합 테스트 컨테이너
 │   └── verify_toolchain.sh     # 컨테이너 내 툴체인/PQC 알고리즘 일괄 검증 스크립트
@@ -65,6 +68,7 @@ applied-pqc-lab/
 ├── mkdocs.yml                  # MkDocs 테마, i18n 및 다이어그램 설정
 ├── requirements.txt            # 문서 빌드 의존성 목록
 ├── PROJECT_SPEC.md             # 프로젝트 마스터 명세 및 작업 로드맵
+├── SKILL.md                    # 문서 및 코드 작성 표준 가이드라인
 └── README.md
 ```
 

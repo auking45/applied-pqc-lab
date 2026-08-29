@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# =============================================================================
+# Applied PQC Lab - {{ title_en }} (OpenSSL CLI Script)
+# =============================================================================
+
+readonly GREEN="\033[0;32m"
+readonly NC="\033[0m"
+
+main() {
+    echo -e "${GREEN}[+] Running {{ slug }} CLI verification on OpenSSL 3.5+...${NC}"
+    openssl version
+}
+
+main "$@"

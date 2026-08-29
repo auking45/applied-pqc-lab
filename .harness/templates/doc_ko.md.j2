@@ -1,0 +1,54 @@
+# {{ title_ko }}
+
+## 📌 개요
+{{ description_ko }}
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Sender as 송신자 (Sender)
+    participant Receiver as 수신자 (Receiver)
+
+    Note over Sender: 1. 일회용 대칭키(DEK) 생성
+    Note over Sender: 2. 수신자 공개키로 키 캡슐화
+    Sender->>Receiver: 캡슐화된 키 및 암호문 전송
+    Note over Receiver: 3. 수신자 개인키로 역캡슐화 및 복호화
+```
+
+---
+
+## 💻 실행 가능한 검증 코드
+
+=== "Rust"
+
+    ```rust
+    // Rust 2021/2024 Example
+    fn main() {
+        println!("Running {{ slug }} verification in Rust...");
+    }
+    ```
+
+=== "C++"
+
+    ```cpp
+    // C++20 Example
+    #include <iostream>
+
+    int main() {
+        std::cout << "Running {{ slug }} verification in C++20...\n";
+        return 0;
+    }
+    ```
+
+=== "OpenSSL CLI"
+
+    ```bash
+    # OpenSSL 3.5 CLI Example
+    openssl version
+    ```
+
+??? note "수학적 원리 깊게 보기 (Mathematical Deep Dive)"
+
+    심층적인 수학적 증명이나 격자 기반 암호의 다항식 환 연산 등 복잡한 수식은 이와 같이 접이식 블록으로 격리하여 제공한다.
+
+    $$R_q = \mathbb{Z}_q[X] / (X^n + 1)$$

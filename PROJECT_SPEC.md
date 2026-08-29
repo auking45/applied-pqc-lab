@@ -49,7 +49,7 @@
   - Visual-First 원칙 (Mermaid 시퀀스/플로우차트 필수).
   - Deep-dive 수식/격자 이론 격리 규칙 (`??? note "수학적 원리 깊게 보기"`).
   - 3개 언어 탭(Rust, C++, OpenSSL CLI) 필수 규격 정의.
-- [ ] **Task 1-5:** 아티클 생성 및 테스트 자동화 하네스 도구 구축 (`.harness/`):
+- [x] **Task 1-5:** 아티클 생성 및 테스트 자동화 하네스 도구 구축 (`.harness/`):
   - `.harness/harness.py`: 신규 주제 스캐폴딩(`new`), 문서 정적 검사(`lint`), Docker 테스트 자동 실행(`test`) CLI.
   - `.harness/templates/`: Jinja2 기반 마크다운(한/영) 및 테스트 코드 템플릿.
   - CI 워크플로우에 `harness.py lint` 게이트웨이 연동.

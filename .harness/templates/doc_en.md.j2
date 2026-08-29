@@ -1,0 +1,54 @@
+# {{ title_en }}
+
+## 📌 Overview
+{{ description_en }}
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Sender as Sender
+    participant Receiver as Receiver
+
+    Note over Sender: 1. Generate ephemeral symmetric key (DEK)
+    Note over Sender: 2. Encapsulate key with receiver public key
+    Sender->>Receiver: Transmit encapsulated key & ciphertext
+    Note over Receiver: 3. Decapsulate key with private key & decrypt payload
+```
+
+---
+
+## 💻 Runnable Implementation Examples
+
+=== "Rust"
+
+    ```rust
+    // Rust 2021/2024 Example
+    fn main() {
+        println!("Running {{ slug }} verification in Rust...");
+    }
+    ```
+
+=== "C++"
+
+    ```cpp
+    // C++20 Example
+    #include <iostream>
+
+    int main() {
+        std::cout << "Running {{ slug }} verification in C++20...\n";
+        return 0;
+    }
+    ```
+
+=== "OpenSSL CLI"
+
+    ```bash
+    # OpenSSL 3.5 CLI Example
+    openssl version
+    ```
+
+??? note "Mathematical Deep Dive (Foldable)"
+
+    In-depth mathematical proofs or lattice polynomial ring operations are isolated within foldable blocks.
+
+    $$R_q = \mathbb{Z}_q[X] / (X^n + 1)$$
