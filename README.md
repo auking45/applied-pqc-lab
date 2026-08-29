@@ -56,12 +56,14 @@ applied-pqc-lab/
 │   │   └── 05-tls-and-mtls/
 │   ├── javascripts/            # MathJax & Mermaid 동적 렌더러
 │   └── stylesheets/            # 커스텀 테마 스타일 (다크/라이트)
-├── examples/                   # Docker 내부에서 실행되는 실제 테스트 코드
-│   ├── scripts/
-│   │   └── run_pki.sh          # OpenSSL 3.5 CLI 기반 PKI 발급 스크립트
-│   ├── cpp/
-│   └── rust/
+├── examples/                   # 챕터별 독립 E2E 실습 코드 (4개 언어 지원)
+│   ├── 01-classical-hybrid/    # Python, Rust, C++, CLI 및 run.sh
+│   ├── 02-modern-hpke/
+│   ├── 03-pqc-primitives/
+│   ├── 04-pki-and-x509/
+│   └── 05-tls-and-mtls/
 ├── scripts/
+│   ├── test_all.sh             # 전체 챕터 E2E 테스트 일괄/선택 실행기
 │   ├── run_docker.sh           # Docker 랩 환경 빌드/실행/검증 자동화 스크립트
 │   └── serve_docs.sh           # 로컬 문서 뷰어 원클릭 실행 스크립트
 ├── compose.yaml                # 로컬 원클릭 테스트 실행용 Compose 파일
@@ -87,8 +89,11 @@ applied-pqc-lab/
 # 2. 툴체인 및 OpenSSL 3.5+ PQC(ML-KEM, ML-DSA) 환경 일괄 검증
 ./scripts/run_docker.sh verify
 
-# 3. 대화형 랩 컨테이너 진입 (C++/Rust/OpenSSL CLI 실습)
+# 3. 대화형 랩 컨테이너 진입 (C++/Rust/Python/CLI 실습)
 ./scripts/run_docker.sh shell
+
+# (선택) 로컬 호스트에서 전체 챕터 E2E 테스트 일괄 실행
+./scripts/test_all.sh
 
 # (선택) 로컬에서 소스로부터 직접 이미지 재빌드
 ./scripts/run_docker.sh build
