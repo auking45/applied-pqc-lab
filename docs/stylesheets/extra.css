@@ -1,0 +1,50 @@
+/* Custom styles for Applied PQC Lab */
+
+:root {
+  --md-primary-fg-color: #283593;
+  --md-primary-fg-color--light: #3949ab;
+  --md-primary-fg-color--dark: #1a237e;
+  --md-accent-fg-color: #00897b;
+}
+
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: #1a237e;
+  --md-accent-fg-color: #26a69a;
+}
+
+/* Adjust tabbed content header styling */
+.tabbed-set {
+  border-radius: 4px;
+}
+
+/* Mermaid Diagram Styling for High Contrast in Dark & Light Modes */
+.mermaid-container {
+  padding: 1rem 0;
+}
+
+.mermaid-container svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Dark mode text visibility enhancements */
+[data-md-color-scheme="slate"] .mermaid-container .node text,
+[data-md-color-scheme="slate"] .mermaid-container .label text,
+[data-md-color-scheme="slate"] .mermaid-container .labelText,
+[data-md-color-scheme="slate"] .mermaid-container .noteText,
+[data-md-color-scheme="slate"] .mermaid-container .actor-man,
+[data-md-color-scheme="slate"] .mermaid-container text.actor,
+[data-md-color-scheme="slate"] .mermaid-container .messageText {
+  fill: #f1f5f9 !important;
+  color: #f1f5f9 !important;
+}
+
+[data-md-color-scheme="slate"] .mermaid-container .edgeLabel {
+  background-color: #1e293b !important;
+  color: #f1f5f9 !important;
+}
+
+[data-md-color-scheme="slate"] .mermaid-container .edgeLabel p,
+[data-md-color-scheme="slate"] .mermaid-container .edgeLabel span {
+  color: #f1f5f9 !important;
+}

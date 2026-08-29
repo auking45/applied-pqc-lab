@@ -5,6 +5,7 @@
 - **Key Principles:**
   - 호스트 환경 오염 없는 **Docker 기반 완전 격리 테스트 환경**.
   - 수식보다 **Mermaid 다이어그램과 인터랙티브 코드 탭** 우선 배치.
+  - 문서 및 코드 품질의 일관성을 유지하기 위한 **Authoring Skill & Verification Harness 체계 도입**.
   - 단계별 원자적(Atomic) 커밋 및 동작 확인 기반의 점진적 빌드업.
 
 ---
@@ -37,11 +38,18 @@
 
 ## 3. Step-by-Step Roadmap (Milestones)
 
-### [Phase 1] Foundation, Docker & CI/CD Pipeline
-- [ ] **Task 1-1:** 프로젝트 기본 디렉터리 구조 생성 + Material for MkDocs 설정 (`mkdocs.yml`, 다국어 `mkdocs-static-i18n`, 다크/라이트 팔레트 토글, Mermaid/수식 확장 설정).
+### [Phase 1] Foundation, Docker, Harness & CI/CD Pipeline
+- [x] **Task 1-1:** 프로젝트 기본 디렉터리 구조 생성 + Material for MkDocs 설정 (`mkdocs.yml`, 다국어 `mkdocs-static-i18n`, 다크/라이트 팔레트 토글, Mermaid/수식 확장 설정).
 - [ ] **Task 1-2:** OpenSSL 3.5+ 및 Rust/C++ 툴체인을 포함하는 재현 가능한 Dockerfile 및 `compose.yaml` 작성.
 - [ ] **Task 1-3:** GitHub Actions 워크플로우(`.github/workflows/ci.yml`) 작성 (Docker 기반 E2E 테스트 검증 -> MkDocs Pages 배포).
-- [ ] **Task 1-4:** 문서 작성 및 테스트 하네스 규칙 명세 (`SKILL.md`) 작성.
+- [ ] **Task 1-4:** 문서 작성 표준 가이드라인 명세 (`SKILL.md`) 작성:
+  - Visual-First 원칙 (Mermaid 시퀀스/플로우차트 필수).
+  - Deep-dive 수식/격자 이론 격리 규칙 (`??? note "수학적 원리 깊게 보기"`).
+  - 3개 언어 탭(Rust, C++, OpenSSL CLI) 필수 규격 정의.
+- [ ] **Task 1-5:** 아티클 생성 및 테스트 자동화 하네스 도구 구축 (`.harness/`):
+  - `.harness/harness.py`: 신규 주제 스캐폴딩(`new`), 문서 정적 검사(`lint`), Docker 테스트 자동 실행(`test`) CLI.
+  - `.harness/templates/`: Jinja2 기반 마크다운(한/영) 및 테스트 코드 템플릿.
+  - CI 워크플로우에 `harness.py lint` 게이트웨이 연동.
 
 ### [Phase 2] Classical Hybrid Encryption vs RFC 9180 HPKE
 - [ ] **Task 2-1:** [Doc & Code] 고전 대칭키 + 비대칭 Key Wrapping 방식의 구조와 한계 (문서 한/영 + Docker 내 C++/Rust 예제 실행).

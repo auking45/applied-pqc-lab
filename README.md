@@ -34,20 +34,46 @@ applied-pqc-lab/
 │       └── ci.yml              # E2E 테스트 검증 및 GitHub Pages 배포 파이프라인
 ├── docker/
 │   └── Dockerfile.lab          # OpenSSL 3.5+ & Rust/C++ 통합 테스트 컨테이너
-├── docs/                       # 다국어 마크다운 문서 (한/영)
-│   ├── index.en.md
-│   ├── index.ko.md
-│   ├── 01-classical-hybrid/
-│   ├── 02-modern-hpke/
-│   ├── 03-pqc-primitives/
-│   ├── 04-pki-and-x509/
-│   └── 05-tls-and-mtls/
+├── docs/                       # 다국어 마크다운 문서 (docs_structure: folder)
+│   ├── ko/                     # 한국어 기술 문서
+│   │   ├── index.md
+│   │   ├── 01-classical-hybrid/
+│   │   ├── 02-modern-hpke/
+│   │   ├── 03-pqc-primitives/
+│   │   ├── 04-pki-and-x509/
+│   │   └── 05-tls-and-mtls/
+│   ├── en/                     # English technical documentation
+│   │   ├── index.md
+│   │   ├── 01-classical-hybrid/
+│   │   ├── 02-modern-hpke/
+│   │   ├── 03-pqc-primitives/
+│   │   ├── 04-pki-and-x509/
+│   │   └── 05-tls-and-mtls/
+│   ├── javascripts/            # MathJax & Mermaid 동적 렌더러
+│   └── stylesheets/            # 커스텀 테마 스타일 (다크/라이트)
 ├── examples/                   # Docker 내부에서 실행되는 실제 테스트 코드
 │   ├── scripts/
 │   │   └── run_pki.sh          # OpenSSL 3.5 CLI 기반 PKI 발급 스크립트
 │   ├── cpp/
 │   └── rust/
+├── scripts/
+│   └── serve_docs.sh           # 로컬 문서 뷰어 원클릭 실행 스크립트
 ├── compose.yaml                # 로컬 원클릭 테스트 실행용 Compose 파일
 ├── mkdocs.yml                  # MkDocs 테마, i18n 및 다이어그램 설정
+├── requirements.txt            # 문서 빌드 의존성 목록
 ├── PROJECT_SPEC.md             # 프로젝트 마스터 명세 및 작업 로드맵
 └── README.md
+```
+
+---
+
+## 🚀 Quick Start (로컬 문서 사이트 실행)
+
+저장소를 클론한 후 아래 원클릭 스크립트를 실행하면 Python 가상환경 구성부터 의존성 설치 및 로컬 서버 실행까지 자동으로 처리됩니다:
+
+```bash
+# 로컬 문서 서버 실행 (자동 venv 생성 및 의존성 설치)
+./scripts/serve_docs.sh
+```
+
+실행 후 브라우저에서 `http://127.0.0.1:8000`으로 접속하여 문서를 확인하실 수 있습니다.
