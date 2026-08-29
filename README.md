@@ -81,14 +81,17 @@ applied-pqc-lab/
 저장소를 클론한 후 아래 원클릭 스크립트를 통해 Docker 환경을 빌드하고 검증할 수 있습니다:
 
 ```bash
-# 1. 랩 컨테이너 빌드 (Docker 미설치 시 자동 설치 지원)
-./scripts/run_docker.sh build
+# 1. 사전 빌드된 랩 이미지 다운로드 (GitHub Container Registry에서 10초 만에 완료 / 권장)
+./scripts/run_docker.sh pull
 
 # 2. 툴체인 및 OpenSSL 3.5+ PQC(ML-KEM, ML-DSA) 환경 일괄 검증
 ./scripts/run_docker.sh verify
 
 # 3. 대화형 랩 컨테이너 진입 (C++/Rust/OpenSSL CLI 실습)
 ./scripts/run_docker.sh shell
+
+# (선택) 로컬에서 소스로부터 직접 이미지 재빌드
+./scripts/run_docker.sh build
 ```
 
 ### 2. 로컬 문서 사이트 실행 (호스트)

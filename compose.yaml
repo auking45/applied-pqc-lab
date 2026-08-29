@@ -11,7 +11,7 @@ services:
       args:
         BASE_IMAGE: ubuntu:26.04
         OPENSSL_REF: openssl-3.5
-    image: applied-pqc-lab:latest
+    image: ${PQC_LAB_IMAGE:-ghcr.io/auking45/applied-pqc-lab:latest}
     container_name: pqc-lab
     volumes:
       - .:/workspace

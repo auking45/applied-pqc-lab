@@ -108,8 +108,13 @@ check_prerequisites() {
     fi
 }
 
+cmd_pull() {
+    echo "[+] Pulling prebuilt Applied PQC Lab container image from GHCR..."
+    ${DOCKER_COMPOSE_CMD} pull lab "$@"
+}
+
 cmd_build() {
-    echo "[+] Building Applied PQC Lab container image using '${DOCKER_COMPOSE_CMD}'..."
+    echo "[+] Building Applied PQC Lab container image locally..."
     ${DOCKER_COMPOSE_CMD} build lab "$@"
 }
 
@@ -133,18 +138,19 @@ print_usage() {
 Usage: $(basename "$0") <command> [options]
 
 Commands:
+  pull           Pull prebuilt image from GitHub Container Registry (Fastest)
   shell          Enter the interactive PQC lab container (default)
-  build          Build the Docker lab container image
   verify, test   Run toolchain and PQC algorithm verification in Docker
+  build          Build the Docker lab container image locally from source
   down, clean    Stop running containers
   install        Install Docker Engine & Docker Compose on this system
   help           Show this help message
 
 Examples:
-  ./scripts/run_docker.sh install
-  ./scripts/run_docker.sh build
-  ./scripts/run_docker.sh verify
-  ./scripts/run_docker.sh shell
+  ./scripts/run_docker.sh pull      # 10s fast download from GHCR
+  ./scripts/run_docker.sh verify    # Run E2E PQC verification
+  ./scripts/run_docker.sh shell     # Enter interactive shell
+  ./scripts/run_docker.sh build     # Local source rebuild
 EOF2
 }
 
@@ -169,6 +175,9 @@ main() {
     check_prerequisites
 
     case "${action}" in
+        pull)
+            cmd_pull "$@"
+            ;;
         shell|run)
             cmd_shell "$@"
             ;;
