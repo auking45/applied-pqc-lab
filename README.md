@@ -32,6 +32,8 @@ applied-pqc-lab/
 ├── .github/
 │   └── workflows/
 │       └── ci.yml              # E2E 테스트 검증 및 GitHub Pages 배포 파이프라인
+│       ├── test.yml            # Docker 기반 PQC 툴체인 및 E2E 테스트 검증 파이프라인
+│       └── docs.yml            # MkDocs 문서 빌드 무결성 검증 및 GitHub Pages 배포
 ├── docker/
 │   ├── Dockerfile.lab          # OpenSSL 3.5+ & Rust/C++ 통합 테스트 컨테이너
 │   └── verify_toolchain.sh     # 컨테이너 내 툴체인/PQC 알고리즘 일괄 검증 스크립트
