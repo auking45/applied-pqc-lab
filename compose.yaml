@@ -17,7 +17,7 @@ services:
       - .:/workspace
     working_dir: /workspace
     ports:
-      - "8443:8443"  # TLS 1.3 / mTLS hands-on testing port
+      - "8443:8443" # TLS 1.3 / mTLS hands-on testing port
     stdin_open: true
     tty: true
     command: ["/bin/bash"]
