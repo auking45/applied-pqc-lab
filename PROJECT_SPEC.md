@@ -44,7 +44,8 @@
 - [x] **Task 1-1:** 프로젝트 기본 디렉터리 구조 생성 + Material for MkDocs 설정 (`mkdocs.yml`, 다국어 `mkdocs-static-i18n`, 다크/라이트 팔레트 토글, Mermaid/수식 확장 설정).
 - [x] **Task 1-2:** OpenSSL 3.5+ 및 Rust/C++ 툴체인을 포함하는 재현 가능한 Dockerfile 및 `compose.yaml` 작성.
 - [x] **Task 1-3:** GitHub Actions 워크플로우(`.github/workflows/ci.yml`) 작성 (Docker 기반 E2E 테스트 검증 -> MkDocs Pages 배포).
-- [ ] **Task 1-4:** 문서 작성 표준 가이드라인 명세 (`SKILL.md`) 작성:
+- [x] **Task 1-4:** 문서 작성 표준 가이드라인 명세 (`SKILL.md`) 작성:
+  - 문체/어조 규칙 (한국어 "~다/한다" 평서체 및 간결한 엔지니어링 톤 명시).
   - Visual-First 원칙 (Mermaid 시퀀스/플로우차트 필수).
   - Deep-dive 수식/격자 이론 격리 규칙 (`??? note "수학적 원리 깊게 보기"`).
   - 3개 언어 탭(Rust, C++, OpenSSL CLI) 필수 규격 정의.

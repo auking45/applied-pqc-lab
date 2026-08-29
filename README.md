@@ -6,12 +6,12 @@ Practical Post-Quantum Cryptography (PQC) & HPKE engineering lab with OpenSSL 3.
 
 ## 📌 Overview
 
-**Applied PQC Lab**은 이론 위주의 암호학 설명을 넘어, 개발자가 직접 동작 원리를 시각적으로 이해하고 실제 코드로 검증할 수 있는 오픈소스 기술 문서 및 실습 랩입니다.
+**Applied PQC Lab**은 이론 위주의 설명을 넘어, 개발자가 직접 동작 원리를 시각적으로 이해하고 실제 코드로 검증할 수 있도록 구성된 오픈소스 기술 문서 및 실습 랩이다.
 
-- **From Classical to Post-Quantum**: 고전 하이브리드 암호(RSA/ECIES + AES)부터 현대 RFC 9180 HPKE, 그리고 NIST 표준 PQC(ML-KEM, ML-DSA)로의 전환 과정을 단계별로 다룹니다.
-- **Visual-First Architecture**: 복잡한 수식 대신 Mermaid 시퀀스 다이어그램 및 상태 흐름도를 중심으로 핵심 메커니즘을 설명합니다. (심층 수학 이론은 접이식 블록으로 격리)
-- **Verified Implementations**: OpenSSL 3.5+ 네이티브 환경을 기반으로 한 Rust, C++, CLI 예제 코드를 제공하며, 모든 코드는 Docker 컨테이너 환경에서 E2E 테스트로 검증됩니다.
-- **Bilingual Documentation**: 한국어 및 영문(i18n) 페이지를 완벽하게 분리 제공합니다.
+- **From Classical to Post-Quantum**: 고전 하이브리드 암호(RSA/ECIES + AES)부터 현대 RFC 9180 HPKE, NIST 표준 PQC(ML-KEM, ML-DSA)로의 전환 과정을 단계별로 다룬다.
+- **Visual-First Architecture**: 복잡한 수식 대신 Mermaid 시퀀스 다이어그램 및 상태 흐름도를 중심으로 핵심 메커니즘을 설명한다. (심층 수학 이론은 접이식 블록으로 격리)
+- **Verified Implementations**: OpenSSL 3.5+ 네이티브 환경 기반의 Rust, C++, CLI 예제 코드를 제공하며, 모든 코드는 Docker 컨테이너 환경에서 E2E 테스트로 검증된다.
+- **Bilingual Documentation**: 한국어 및 영문(i18n) 문서를 독립된 디렉터리로 완벽히 분리 제공한다.
 
 ---
 

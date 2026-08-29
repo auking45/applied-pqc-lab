@@ -1,7 +1,7 @@
 # 04. PQC X.509 PKI & End-to-End Encryption
 
 ## 📌 개요
-양자내성 환경에서는 신원 증명과 인증서 서명에 **ML-DSA(FIPS 204)**가 사용되고, 기밀 통신을 위한 암호화 공개키 배포에는 **ML-KEM(FIPS 203)** 인증서가 활용됩니다. 본 장에서는 순수 PQC 기반의 X.509 Root CA, Intermediate CA 및 End-Entity 인증서 발급과 E2E 암호화 워크플로우를 다룹니다.
+양자내성 환경에서는 신원 증명과 인증서 서명에 **ML-DSA(FIPS 204)**가 사용되고, 기밀 통신을 위한 암호화 공개키 배포에는 **ML-KEM(FIPS 203)** 인증서가 활용된다. 본 장에서는 순수 PQC 기반의 X.509 Root CA, Intermediate CA 및 End-Entity 인증서 발급과 E2E 암호화 워크플로우를 다룬다.
 
 ```mermaid
 sequenceDiagram

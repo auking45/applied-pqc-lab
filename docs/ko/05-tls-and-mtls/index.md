@@ -1,13 +1,13 @@
 # 05. PQC TLS 1.3 / mTLS Hands-on
 
 ## 📌 개요
-TLS 1.3 핸드셰이크에서 키 교환(Key Exchange)은 **ML-KEM**으로 수행되고, 서버/클라이언트 상호 인증(mTLS)을 위한 디지털 서명은 **ML-DSA**로 수행됩니다. 본 장에서는 OpenSSL 3.5 기반의 PQC TLS 1.3 연결 및 상호 인증(mTLS)을 직접 구성하고 검증합니다.
+TLS 1.3 핸드셰이크에서 키 교환(Key Exchange)은 **ML-KEM**으로 수행되고, 서버/클라이언트 상호 인증(mTLS)을 위한 디지털 서명은 **ML-DSA**로 수행된다. 본 장에서는 OpenSSL 3.5 기반의 PQC TLS 1.3 연결 및 상호 인증(mTLS)을 직접 구성하고 검증한다.
 
 ```mermaid
 sequenceDiagram
     autonumber
     participant Client as TLS 클라이언트 (Client)
-    participant Server as TLS 서버 (Server)
+    participant Server as TLS Server (서버)
 
     Note over Client,Server: [TLS 1.3 Key Share: ML-KEM-768]
     Client->>Server: ClientHello (KeyShare: ML-KEM-768 public key)
