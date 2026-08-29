@@ -1,4 +1,4 @@
-name: Documentation & Pages Deployment
+name: Docs
 
 on:
   push:

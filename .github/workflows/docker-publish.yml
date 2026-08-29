@@ -1,4 +1,4 @@
-name: Publish Lab Container Image to GHCR
+name: Docker Publish
 
 on:
   push:
