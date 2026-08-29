@@ -26,6 +26,10 @@ jobs:
         run: |
           docker compose pull lab 2>/dev/null || docker compose build lab
 
-      - name: Run Toolchain & PQC Primitive Verification
+      - name: Verify Toolchain & OpenSSL 3.5+ PQC Primitives
         run: |
           docker compose run --rm lab ./docker/verify_toolchain.sh
+
+      - name: Run Multi-Chapter E2E Test Suites (Python/Rust/C++/CLI)
+        run: |
+          docker compose run --rm lab ./scripts/test_all.sh all
