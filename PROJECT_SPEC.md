@@ -1,6 +1,7 @@
 # [Project Specification] Applied Cryptography & PQC Engineering Lab
 
 ## 1. Project Overview & Objectives
+
 - **Goal:** 고전 하이브리드 암호부터 RFC 9180 HPKE, NIST PQC(FIPS 203/204), X.509 PKI, TLS 1.3/mTLS까지 다루는 **다국어(한/영) 기술 문서 사이트(GitHub Pages)** 및 **실행 가능한 멀티 언어(Rust, C++, CLI) E2E 테스트 랩** 구축.
 - **Key Principles:**
   - 호스트 환경 오염 없는 **Docker 기반 완전 격리 테스트 환경**.
@@ -39,8 +40,9 @@
 ## 3. Step-by-Step Roadmap (Milestones)
 
 ### [Phase 1] Foundation, Docker, Harness & CI/CD Pipeline
+
 - [x] **Task 1-1:** 프로젝트 기본 디렉터리 구조 생성 + Material for MkDocs 설정 (`mkdocs.yml`, 다국어 `mkdocs-static-i18n`, 다크/라이트 팔레트 토글, Mermaid/수식 확장 설정).
-- [ ] **Task 1-2:** OpenSSL 3.5+ 및 Rust/C++ 툴체인을 포함하는 재현 가능한 Dockerfile 및 `compose.yaml` 작성.
+- [x] **Task 1-2:** OpenSSL 3.5+ 및 Rust/C++ 툴체인을 포함하는 재현 가능한 Dockerfile 및 `compose.yaml` 작성.
 - [ ] **Task 1-3:** GitHub Actions 워크플로우(`.github/workflows/ci.yml`) 작성 (Docker 기반 E2E 테스트 검증 -> MkDocs Pages 배포).
 - [ ] **Task 1-4:** 문서 작성 표준 가이드라인 명세 (`SKILL.md`) 작성:
   - Visual-First 원칙 (Mermaid 시퀀스/플로우차트 필수).
@@ -52,18 +54,22 @@
   - CI 워크플로우에 `harness.py lint` 게이트웨이 연동.
 
 ### [Phase 2] Classical Hybrid Encryption vs RFC 9180 HPKE
+
 - [ ] **Task 2-1:** [Doc & Code] 고전 대칭키 + 비대칭 Key Wrapping 방식의 구조와 한계 (문서 한/영 + Docker 내 C++/Rust 예제 실행).
 - [ ] **Task 2-2:** [Doc & Code] RFC 9180 HPKE 아키텍처 (KEM/KDF/AEAD 프레임워크 흐름도 + Docker 내 HPKE Base 모드 동작 검증 코드).
 
 ### [Phase 3] NIST PQC Primitives & Security Guidelines
+
 - [ ] **Task 3-1:** [Doc & Code] FIPS 203 ML-KEM (구 Kyber) 원리 시각화 + Rust/C++/OpenSSL 3.5 CLI 캡슐화 예제 (Docker 검증).
 - [ ] **Task 3-2:** [Doc & Code] FIPS 204 ML-DSA (구 Dilithium) 전자서명 흐름도 + 서명/검증 예제 (Docker 검증).
 - [ ] **Task 3-3:** [Doc] 양자 위협 모델 및 보안 강도 권고 (NIST Cat 1/3/5, CNSA 2.0 매핑 및 AES-256 권고 이유).
 
 ### [Phase 4] PQC X.509 PKI & End-to-End Encryption
+
 - [ ] **Task 4-1:** [Script & Doc] OpenSSL 3.5 네이티브 CLI 기반 PKI 발급 자동화 스크립트 (`run_pki.sh`: ML-DSA Root CA, ML-KEM 수신자 인증서 발급).
 - [ ] **Task 4-2:** [Code & Test] 인증서 검증 -> ML-KEM 공개키 추출 -> HPKE AES-256-GCM 암/복호화 E2E 통합 테스트 (Rust & C++, Docker 검증).
 
 ### [Phase 5] PQC TLS 1.3 / mTLS Hands-on
+
 - [ ] **Task 5-1:** [Doc & Script] PQC TLS 1.3 핸드셰이크 단계별 매핑 가이드.
 - [ ] **Task 5-2:** [Test] OpenSSL `s_server` / `s_client` 기반 ML-DSA 및 ML-KEM mTLS 양방향 인증 자동화 테스트 스크립트 작성 및 Docker/CI 연동.

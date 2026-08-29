@@ -19,7 +19,7 @@ Practical Post-Quantum Cryptography (PQC) & HPKE engineering lab with OpenSSL 3.
 
 - **Documentation:** [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/), `mkdocs-static-i18n`, Mermaid.js, MathJax
 - **Crypto Engine:** OpenSSL 3.5+ (Native NIST FIPS 203/204/205 support)
-- **Languages:** Rust (2021 edition), C++20, Bash CLI
+- **Languages:** Rust (2021/2024 edition), C++20, Bash CLI
 - **Test & Isolation:** Docker, Docker Compose
 - **CI/CD:** GitHub Actions (Automated Test Verification & GitHub Pages Deployment)
 
@@ -33,7 +33,8 @@ applied-pqc-lab/
 │   └── workflows/
 │       └── ci.yml              # E2E 테스트 검증 및 GitHub Pages 배포 파이프라인
 ├── docker/
-│   └── Dockerfile.lab          # OpenSSL 3.5+ & Rust/C++ 통합 테스트 컨테이너
+│   ├── Dockerfile.lab          # OpenSSL 3.5+ & Rust/C++ 통합 테스트 컨테이너
+│   └── verify_toolchain.sh     # 컨테이너 내 툴체인/PQC 알고리즘 일괄 검증 스크립트
 ├── docs/                       # 다국어 마크다운 문서 (docs_structure: folder)
 │   ├── ko/                     # 한국어 기술 문서
 │   │   ├── index.md
@@ -57,6 +58,7 @@ applied-pqc-lab/
 │   ├── cpp/
 │   └── rust/
 ├── scripts/
+│   ├── run_docker.sh           # Docker 랩 환경 빌드/실행/검증 자동화 스크립트
 │   └── serve_docs.sh           # 로컬 문서 뷰어 원클릭 실행 스크립트
 ├── compose.yaml                # 로컬 원클릭 테스트 실행용 Compose 파일
 ├── mkdocs.yml                  # MkDocs 테마, i18n 및 다이어그램 설정
@@ -67,9 +69,24 @@ applied-pqc-lab/
 
 ---
 
-## 🚀 Quick Start (로컬 문서 사이트 실행)
+## 🚀 Quick Start
 
-저장소를 클론한 후 아래 원클릭 스크립트를 실행하면 Python 가상환경 구성부터 의존성 설치 및 로컬 서버 실행까지 자동으로 처리됩니다:
+### 1. Docker 기반 암호학 랩 환경 실행 (완전 격리 / 권장)
+
+저장소를 클론한 후 아래 원클릭 스크립트를 통해 Docker 환경을 빌드하고 검증할 수 있습니다:
+
+```bash
+# 1. 랩 컨테이너 빌드 (Docker 미설치 시 자동 설치 지원)
+./scripts/run_docker.sh build
+
+# 2. 툴체인 및 OpenSSL 3.5+ PQC(ML-KEM, ML-DSA) 환경 일괄 검증
+./scripts/run_docker.sh verify
+
+# 3. 대화형 랩 컨테이너 진입 (C++/Rust/OpenSSL CLI 실습)
+./scripts/run_docker.sh shell
+```
+
+### 2. 로컬 문서 사이트 실행 (호스트)
 
 ```bash
 # 로컬 문서 서버 실행 (자동 venv 생성 및 의존성 설치)

@@ -1,0 +1,101 @@
+# =============================================================================
+# Applied PQC Engineering Lab - Base Container
+# Includes: OpenSSL 3.5+ (Native NIST FIPS 203/204), Rust (Stable), C++20, Python
+# =============================================================================
+
+ARG BASE_IMAGE=ubuntu:26.04
+FROM ${BASE_IMAGE}
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Etc/UTC
+
+# -----------------------------------------------------------------------------
+# 1. System Dependencies & Build Tools
+# -----------------------------------------------------------------------------
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    cmake \
+    ninja-build \
+    clang \
+    g++ \
+    pkg-config \
+    git \
+    curl \
+    ca-certificates \
+    python3 \
+    python3-pip \
+    python3-venv \
+    libssl-dev \
+    locales \
+    && locale-gen en_US.UTF-8 \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US:en
+ENV LC_ALL=en_US.UTF-8
+
+# -----------------------------------------------------------------------------
+# 2. Build and Install OpenSSL 3.5+ with Native NIST PQC (ML-KEM / ML-DSA)
+# -----------------------------------------------------------------------------
+ARG OPENSSL_REF=openssl-3.5
+WORKDIR /tmp/openssl-build
+
+RUN (git clone --depth 1 --branch ${OPENSSL_REF} https://github.com/openssl/openssl.git . 2>/dev/null \
+    || git clone --depth 1 --branch master https://github.com/openssl/openssl.git .) \
+    && ./config \
+        --prefix=/opt/openssl \
+        --openssldir=/opt/openssl/ssl \
+        --libdir=lib \
+        shared \
+        enable-ec_nistp_64_gcc_128 \
+        no-ssl3 \
+        no-ssl3-method \
+        no-docs \
+    && make -j$(nproc) \
+    && make install_sw \
+    && cd / && rm -rf /tmp/openssl-build
+
+# Configure OpenSSL system paths and library linking
+ENV OPENSSL_DIR="/opt/openssl"
+ENV OPENSSL_LIB_DIR="/opt/openssl/lib"
+ENV OPENSSL_INCLUDE_DIR="/opt/openssl/include"
+ENV PKG_CONFIG_PATH="/opt/openssl/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
+ENV LD_LIBRARY_PATH="/opt/openssl/lib:${LD_LIBRARY_PATH:-}"
+ENV PATH="/opt/openssl/bin:${PATH}"
+
+# Ensure ldconfig recognizes /opt/openssl/lib
+RUN echo "/opt/openssl/lib" > /etc/ld.so.conf.d/openssl-custom.conf && ldconfig
+
+# -----------------------------------------------------------------------------
+# 3. Rust Toolchain Installation (Stable, 2021/2024 Edition)
+# -----------------------------------------------------------------------------
+ENV RUSTUP_HOME=/opt/rust/rustup
+ENV CARGO_HOME=/opt/rust/cargo
+ENV PATH="/opt/rust/cargo/bin:${PATH}"
+
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
+    --default-toolchain stable \
+    --profile default \
+    --no-modify-path \
+    && chmod -R a+w /opt/rust
+
+# -----------------------------------------------------------------------------
+# 4. Python Environment for Documentation & Test Harness
+# -----------------------------------------------------------------------------
+ENV VIRTUAL_ENV=/opt/venv
+RUN python3 -m venv ${VIRTUAL_ENV}
+ENV PATH="${VIRTUAL_ENV}/bin:${PATH}"
+
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir \
+        mkdocs>=1.6.0 \
+        mkdocs-material>=9.5.0 \
+        mkdocs-static-i18n[material]>=1.2.0 \
+        pymdown-extensions>=10.7
+
+# -----------------------------------------------------------------------------
+# 5. Workspace Configuration
+# -----------------------------------------------------------------------------
+WORKDIR /workspace
+
+CMD ["/bin/bash"]
