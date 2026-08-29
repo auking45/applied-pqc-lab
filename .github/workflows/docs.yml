@@ -17,12 +17,12 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build-and-deploy:
-    name: "Build & Deploy MkDocs"
+  # ---------------------------------------------------------------------------
+  # 1. Build Documentation & Validate
+  # ---------------------------------------------------------------------------
+  build:
+    name: "Build MkDocs Site"
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -40,7 +40,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Build MkDocs documentation
+      - name: Build MkDocs documentation (strict mode)
         run: |
           mkdocs build --strict
 
@@ -50,7 +50,18 @@ jobs:
         with:
           path: site
 
+  # ---------------------------------------------------------------------------
+  # 2. Deploy to GitHub Pages (Main branch only)
+  # ---------------------------------------------------------------------------
+  deploy:
+    name: "Deploy to GitHub Pages"
+    needs: build
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - name: Deploy to GitHub Pages
-        if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         id: deployment
         uses: actions/deploy-pages@v4

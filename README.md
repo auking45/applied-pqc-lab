@@ -31,7 +31,6 @@ Practical Post-Quantum Cryptography (PQC) & HPKE engineering lab with OpenSSL 3.
 applied-pqc-lab/
 ├── .github/
 │   └── workflows/
-│       └── ci.yml              # E2E 테스트 검증 및 GitHub Pages 배포 파이프라인
 │       ├── test.yml            # Docker 기반 PQC 툴체인 및 E2E 테스트 검증 파이프라인
 │       └── docs.yml            # MkDocs 문서 빌드 무결성 검증 및 GitHub Pages 배포
 ├── docker/
