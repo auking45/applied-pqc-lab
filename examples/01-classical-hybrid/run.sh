@@ -10,6 +10,16 @@ readonly GREEN="\033[0;32m"
 readonly BLUE="\033[0;34m"
 readonly NC="\033[0m"
 
+bin2hex() {
+    if command -v xxd >/dev/null 2>&1; then
+        xxd -p -c 64 "$1" | tr -d '\n'
+    elif command -v hexdump >/dev/null 2>&1; then
+        hexdump -ve '1/1 "%02x"' "$1"
+    else
+        python3 -c "import sys; sys.stdout.write(open(sys.argv[1], 'rb').read().hex())" "$1"
+    fi
+}
+
 run_cli_test() {
     echo -e "${BLUE}[1/4] Running OpenSSL 3.5 CLI Key Wrapping & Symmetric Test...${NC}"
     local workdir
@@ -29,7 +39,7 @@ run_cli_test() {
     # 3. Payload encrypt
     echo "Classical Hybrid CLI Verification" > "${workdir}/plain.txt"
     openssl enc -aes-256-cbc -e -in "${workdir}/plain.txt" -out "${workdir}/cipher.bin" \
-        -K "$(xxd -p -c 64 "${workdir}/dek.bin" | tr -d '\n')" -iv "$(cat "${workdir}/iv.hex" | tr -d '\n')"
+        -K "$(bin2hex "${workdir}/dek.bin")" -iv "$(cat "${workdir}/iv.hex" | tr -d '\n')"
 
     # 4. Receiver Unwrap & Decrypt
     openssl pkeyutl -decrypt -inkey "${workdir}/priv.pem" \
@@ -37,7 +47,7 @@ run_cli_test() {
         -in "${workdir}/wrapped.bin" -out "${workdir}/unwrapped.bin"
 
     openssl enc -aes-256-cbc -d -in "${workdir}/cipher.bin" -out "${workdir}/decrypted.txt" \
-        -K "$(xxd -p -c 64 "${workdir}/unwrapped.bin" | tr -d '\n')" -iv "$(cat "${workdir}/iv.hex" | tr -d '\n')"
+        -K "$(bin2hex "${workdir}/unwrapped.bin")" -iv "$(cat "${workdir}/iv.hex" | tr -d '\n')"
 
     diff -u "${workdir}/plain.txt" "${workdir}/decrypted.txt" >/dev/null
     rm -rf "${workdir}"
@@ -45,13 +55,15 @@ run_cli_test() {
 }
 
 run_python_test() {
-    echo -e "${BLUE}[2/4] Running Python 3 (cryptography) Test...${NC}"
-    if [[ -f "${SCRIPT_DIR}/../../.venv/bin/python3" ]]; then
-        "${SCRIPT_DIR}/../../.venv/bin/python3" "${SCRIPT_DIR}/python/main.py"
-    else
-        python3 "${SCRIPT_DIR}/python/main.py"
+    echo -e "${BLUE}[2/4] Running Python 3 Test...${NC}"
+    local py_bin="python3"
+    if [[ -f "/opt/venv/bin/python3" ]]; then
+        py_bin="/opt/venv/bin/python3"
+    elif [[ -f "${SCRIPT_DIR}/../../.venv/bin/python3" ]]; then
+        py_bin="${SCRIPT_DIR}/../../.venv/bin/python3"
     fi
-    echo -e "${GREEN}    [PASS] Python Classical Hybrid test passed!${NC}"
+    "${py_bin}" "${SCRIPT_DIR}/python/main.py"
+    echo -e "${GREEN}    [PASS] Python test passed!${NC}"
 }
 
 run_cpp_test() {

@@ -26,6 +26,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-pip \
     python3-venv \
     libssl-dev \
+    xxd \
     locales \
     && locale-gen en_US.UTF-8 \
     && rm -rf /var/lib/apt/lists/*
@@ -43,14 +44,14 @@ WORKDIR /tmp/openssl-build
 RUN (git clone --depth 1 --branch ${OPENSSL_REF} https://github.com/openssl/openssl.git . 2>/dev/null \
     || git clone --depth 1 --branch master https://github.com/openssl/openssl.git .) \
     && ./config \
-        --prefix=/opt/openssl \
-        --openssldir=/opt/openssl/ssl \
-        --libdir=lib \
-        shared \
-        enable-ec_nistp_64_gcc_128 \
-        no-ssl3 \
-        no-ssl3-method \
-        no-docs \
+    --prefix=/opt/openssl \
+    --openssldir=/opt/openssl/ssl \
+    --libdir=lib \
+    shared \
+    enable-ec_nistp_64_gcc_128 \
+    no-ssl3 \
+    no-ssl3-method \
+    no-docs \
     && make -j$(nproc) \
     && make install_sw \
     && cd / && rm -rf /tmp/openssl-build
@@ -88,12 +89,12 @@ ENV PATH="${VIRTUAL_ENV}/bin:${PATH}"
 
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir \
-        cryptography>=43.0.0 \
-        jinja2>=3.1.0 \
-        mkdocs>=1.6.0 \
-        mkdocs-material>=9.5.0 \
-        mkdocs-static-i18n[material]>=1.2.0 \
-        pymdown-extensions>=10.7
+    cryptography>=43.0.0 \
+    jinja2>=3.1.0 \
+    mkdocs>=1.6.0 \
+    mkdocs-material>=9.5.0 \
+    mkdocs-static-i18n[material]>=1.2.0 \
+    pymdown-extensions>=10.7
 
 # -----------------------------------------------------------------------------
 # 5. Workspace Configuration
