@@ -88,6 +88,8 @@ ENV PATH="${VIRTUAL_ENV}/bin:${PATH}"
 
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir \
+        cryptography>=43.0.0 \
+        jinja2>=3.1.0 \
         mkdocs>=1.6.0 \
         mkdocs-material>=9.5.0 \
         mkdocs-static-i18n[material]>=1.2.0 \

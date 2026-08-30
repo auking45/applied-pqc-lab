@@ -110,6 +110,14 @@ check_python_environment() {
     mkdocs_ver="$(mkdocs --version)"
     log_pass "Python: ${py_ver}"
     log_pass "MkDocs: ${mkdocs_ver}"
+
+    if ! python3 -c "import cryptography" >/dev/null 2>&1; then
+        log_fail "Python 'cryptography' package is missing."
+        return 1
+    fi
+    local crypto_ver
+    crypto_ver="$(python3 -c "import cryptography; print(cryptography.__version__)")"
+    log_pass "Python cryptography: v${crypto_ver}"
 }
 
 main() {
