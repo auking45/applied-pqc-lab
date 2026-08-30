@@ -19,7 +19,9 @@
 
 /* Mermaid Diagram Styling for High Contrast in Dark & Light Modes */
 .mermaid-container {
-  padding: 1rem 0;
+  padding: 1.25rem 0;
+  border-radius: 6px;
+  background-color: transparent;
 }
 
 .mermaid-container svg {
@@ -27,24 +29,35 @@
   height: auto;
 }
 
-/* Dark mode text visibility enhancements */
-[data-md-color-scheme="slate"] .mermaid-container .node text,
-[data-md-color-scheme="slate"] .mermaid-container .label text,
-[data-md-color-scheme="slate"] .mermaid-container .labelText,
-[data-md-color-scheme="slate"] .mermaid-container .noteText,
-[data-md-color-scheme="slate"] .mermaid-container .actor-man,
-[data-md-color-scheme="slate"] .mermaid-container text.actor,
-[data-md-color-scheme="slate"] .mermaid-container .messageText {
-  fill: #f1f5f9 !important;
-  color: #f1f5f9 !important;
+/* Dark mode text & contrast visibility enhancements */
+[data-md-color-scheme="slate"] .mermaid-container svg text {
+  fill: #f8fafc !important;
+}
+
+[data-md-color-scheme="slate"] .mermaid-container svg .titleText,
+[data-md-color-scheme="slate"] .mermaid-container svg .sectionTitle,
+[data-md-color-scheme="slate"] .mermaid-container svg .timeline-title,
+[data-md-color-scheme="slate"] .mermaid-container svg .period,
+[data-md-color-scheme="slate"] .mermaid-container svg .event-desc,
+[data-md-color-scheme="slate"] .mermaid-container svg .task-text,
+[data-md-color-scheme="slate"] .mermaid-container svg .labelText,
+[data-md-color-scheme="slate"] .mermaid-container svg .nodeLabel,
+[data-md-color-scheme="slate"] .mermaid-container svg .node text,
+[data-md-color-scheme="slate"] .mermaid-container svg .label text,
+[data-md-color-scheme="slate"] .mermaid-container svg .noteText,
+[data-md-color-scheme="slate"] .mermaid-container svg .actor-man,
+[data-md-color-scheme="slate"] .mermaid-container svg text.actor,
+[data-md-color-scheme="slate"] .mermaid-container svg .messageText {
+  fill: #f8fafc !important;
+  color: #f8fafc !important;
 }
 
 [data-md-color-scheme="slate"] .mermaid-container .edgeLabel {
   background-color: #1e293b !important;
-  color: #f1f5f9 !important;
+  color: #f8fafc !important;
 }
 
 [data-md-color-scheme="slate"] .mermaid-container .edgeLabel p,
 [data-md-color-scheme="slate"] .mermaid-container .edgeLabel span {
-  color: #f1f5f9 !important;
+  color: #f8fafc !important;
 }

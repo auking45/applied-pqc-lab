@@ -6,13 +6,22 @@ The realization of cryptanalytically relevant quantum computers threatens the fu
 This document analyzes quantum threat models, explains **why symmetric cryptography (AES-256) does not require algorithm replacement**, and outlines migration strategies based on **NIST Security Categories (1/3/5)** and **NSA CNSA 2.0 guidelines**.
 
 ```mermaid
-timeline
-    title HNDL (Harvest Now, Decrypt Later) Attack Timeline
-    2024~Present : Adversaries intercept and store encrypted traffic in bulk (Harvest Now)
-                 : Record classical RSA/ECC session keys
-    CRQC Emergence (Q-Day) : Practical Cryptanalytically Relevant Quantum Computer becomes active
-                           : Execute Shor's Algorithm to retroactively decrypt stored session keys (Decrypt Later)
-    Post-PQC Transition : ML-KEM encryption permanently neutralizes retroactive decryption
+flowchart TD
+    subgraph Phase1 ["Phase 1: Present (Harvest Now)"]
+        A["Adversary intercepts encrypted traffic"] --> B["Stores ciphertexts and RSA/ECC key exchange packets in bulk"]
+    end
+
+    subgraph Phase2 ["Phase 2: Future Q-Day (Decrypt Later)"]
+        C["Practical CRQC operational"] --> D["Executes Shor's Algorithm to retroactively recover session keys"]
+        D --> E["Exposes 10-30 years of historical sensitive data & privacy"]
+    end
+
+    subgraph Defense ["PQC Proactive Defense"]
+        F["Deploy FIPS 203 ML-KEM"] --> G["Permanently neutralizes retroactive decryption even by quantum computers"]
+    end
+
+    Phase1 ==>|Q-Day Arrives| Phase2
+    Defense -.->|Eliminates Threat| Phase2
 ```
 
 ---
@@ -85,20 +94,20 @@ In September 2022, the US National Security Agency (NSA) released **CNSA 2.0 (Co
 
 ### 2. Phased Transition Roadmap
 ```mermaid
-gantt
-    title NSA CNSA 2.0 PQC Migration Timeline
-    dateFormat  YYYY
-    section Software & OS
-    Support Available (Recommended) :2025, 2027
-    Default Configuration           :2027, 2030
-    Legacy Deprecated (Mandatory)   :milestone, 2030, 2030
-    section Web Browsers & Servers
-    Support Available               :2025, 2026
-    Default Configuration           :2026, 2033
-    Mandatory Deployment            :milestone, 2033, 2033
-    section Network Equipment (VPNs/Routers)
-    Support Available               :2026, 2030
-    Mandatory Deployment            :milestone, 2030, 2030
+flowchart LR
+    subgraph S1 ["Stage 1: 2025 ~ 2027"]
+        A1["Software/OS & Web Servers<br>Support Available (Recommended)"]
+    end
+
+    subgraph S2 ["Stage 2: 2027 ~ 2030"]
+        A2["Software/OS Default PQC<br>Network Equipment Mandatory (2030)"]
+    end
+
+    subgraph S3 ["Stage 3: 2033 ~ 2035"]
+        A3["Web/Cloud Mandatory (2033)<br>Legacy Deprecated (2035)"]
+    end
+
+    S1 ==> S2 ==> S3
 ```
 
 ---

@@ -6,13 +6,22 @@
 본 문서에서는 양자 알고리즘이 고전 암호 체계에 미치는 위협 모델을 분석하고, **왜 대칭키 암호(AES-256)는 새로운 알고리즘으로 교체할 필요가 없는지**, 그리고 **NIST 보안 카테고리(Category 1/3/5)** 및 **미국 국가안보국(NSA) CNSA 2.0 가이드라인**에 따른 실무 마이그레이션 기준을 제시한다.
 
 ```mermaid
-timeline
-    title HNDL (Harvest Now, Decrypt Later) 공격 타임라인
-    2024~현재 : 공격자의 암호화 트래픽 대량 수집 및 저장 (Harvest Now)
-              : 현재의 RSA/ECC 기반 세션 키 기록
-    CRQC 등장 시점 (Q-Day) : 실용적 양자 컴퓨터(CRQC) 가동
-                           : 쇼어(Shor) 알고리즘으로 과거 세션 키 일괄 복호화 (Decrypt Later)
-    PQC 전환 완료 후 : ML-KEM 기반 암호화로 과거 데이터의 소급 복호화 원천 차단
+flowchart TD
+    subgraph Phase1 ["1단계: 현재 (Harvest Now)"]
+        A["공격자의 암호화 트래픽 도청"] --> B["대용량 스토리지에 암호문 및 RSA/ECC 키교환 패킷 무단 저장"]
+    end
+
+    subgraph Phase2 ["2단계: 미래 Q-Day 도래 (Decrypt Later)"]
+        C["실용적 양자 컴퓨터(CRQC) 가동"] --> D["쇼어(Shor) 알고리즘으로 과거 세션 키 일괄 소급 복호화"]
+        D --> E["과거 10~30년간 축적된 기밀 데이터 및 프라이버시 전면 노출"]
+    end
+
+    subgraph Defense ["PQC 선제 적용 효과"]
+        F["FIPS 203 ML-KEM 키 캡슐화 적용"] --> G["미래 양자 컴퓨터로도 과거 세션 키 역산 원천 차단"]
+    end
+
+    Phase1 ==>|Q-Day 도래| Phase2
+    Defense -.->|위협 사전 무력화| Phase2
 ```
 
 ---
@@ -85,20 +94,20 @@ NIST는 포스트 퀀텀 암호 알고리즘의 보안 수준을 대칭키 및 �
 
 ### 2. 단계별 마이그레이션 타임라인
 ```mermaid
-gantt
-    title NSA CNSA 2.0 PQC 전환 타임라인
-    dateFormat  YYYY
-    section 소프트웨어 및 OS
-    지원 개시 (권고)       :2025, 2027
-    기본값 전환            :2027, 2030
-    레거시 전면 차단 (의무) :milestone, 2030, 2030
-    section 웹 브라우저 & 서버
-    지원 개시              :2025, 2026
-    기본값 전환            :2026, 2033
-    의무 적용              :milestone, 2033, 2033
-    section 네트워킹 장비 (라우터/VPN)
-    지원 개시              :2026, 2030
-    전면 의무화            :milestone, 2030, 2030
+flowchart LR
+    subgraph S1 ["1단계: 2025 ~ 2027년"]
+        A1["소프트웨어/OS 및 웹 서버<br>PQC 지원 개시 (권고)"]
+    end
+
+    subgraph S2 ["2단계: 2027 ~ 2030년"]
+        A2["소프트웨어/OS 기본값 PQC 전환<br>네트워킹 장비 의무화 (2030)"]
+    end
+
+    subgraph S3 ["3단계: 2033 ~ 2035년"]
+        A3["웹/클라우드 전면 의무화 (2033)<br>레거시 암호 완전 퇴출 (2035)"]
+    end
+
+    S1 ==> S2 ==> S3
 ```
 
 ---
