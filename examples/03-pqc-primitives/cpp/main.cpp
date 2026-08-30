@@ -76,9 +76,9 @@ std::vector<uint8_t> mlkem_decapsulate(EVP_PKEY *pkey, const std::vector<uint8_t
     if (!dctx || EVP_PKEY_decapsulate_init(dctx.get(), nullptr) <= 0)
         throw std::runtime_error("Decap init failed");
     size_t secret_len = 0;
-    EVP_PKEY_decapsulate(dctx, nullptr, &secret_len, ct.data(), ct.size());
+    EVP_PKEY_decapsulate(dctx.get(), nullptr, &secret_len, ct.data(), ct.size());
     std::vector<uint8_t> secret(secret_len);
-    if (EVP_PKEY_decapsulate(dctx, secret.data(), &secret_len, ct.data(), ct.size()) <= 0)
+    if (EVP_PKEY_decapsulate(dctx.get(), secret.data(), &secret_len, ct.data(), ct.size()) <= 0)
     {
         throw std::runtime_error("Decap execution failed");
     }
