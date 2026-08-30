@@ -72,5 +72,5 @@
 
 ### [Phase 5] PQC TLS 1.3 / mTLS Hands-on
 
-- [ ] **Task 5-1:** [Doc & Script] PQC TLS 1.3 핸드셰이크 단계별 매핑 가이드.
-- [ ] **Task 5-2:** [Test] OpenSSL `s_server` / `s_client` 기반 ML-DSA 및 ML-KEM mTLS 양방향 인증 자동화 테스트 스크립트 작성 및 Docker/CI 연동.
+- [x] **Task 5-1:** [Doc & Script] PQC TLS 1.3 핸드셰이크 단계별 매핑 가이드.
+- [x] **Task 5-2:** [Test] OpenSSL `s_server` / `s_client` 기반 ML-DSA 및 ML-KEM mTLS 양방향 인증 4개 언어(Python/Rust/C++/CLI) 자동화 테스트 스크립트 작성 및 Docker/CI 연동.
