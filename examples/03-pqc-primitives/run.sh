@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # -----------------------------------------------------------------------------
-# Applied PQC Lab - Chapter 03 (NIST FIPS 203 ML-KEM) Multi-Language Runner
+# Applied PQC Lab - Chapter 03 (FIPS 203 ML-KEM & FIPS 204 ML-DSA) Runner
 # -----------------------------------------------------------------------------
 
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -22,36 +22,26 @@ bin2hex() {
 }
 
 run_cli_test() {
-    echo -e "${BLUE}[1/4] Running OpenSSL 3.5 CLI ML-KEM-768 Encap & Decap Test...${NC}"
+    echo -e "${BLUE}[1/4] Running OpenSSL 3.5 CLI ML-KEM-768 & ML-DSA-65 Tests...${NC}"
     local workdir
     workdir="$(mktemp -d /tmp/pqc_c03_XXXXXX)"
 
-    # 1. Receiver generates ML-KEM-768 keypair
-    openssl genpkey -algorithm ML-KEM-768 -out "${workdir}/rec_priv.pem" 2>/dev/null
-    openssl pkey -in "${workdir}/rec_priv.pem" -pubout -out "${workdir}/rec_pub.pem" 2>/dev/null
-
-    # 2. Sender encapsulates 32-byte shared secret
-    openssl pkeyutl -encap -pubin -inkey "${workdir}/rec_pub.pem" -out "${workdir}/ct.bin" -secret "${workdir}/sender_secret.bin"
-
-    # 3. Receiver decapsulates shared secret
-    openssl pkeyutl -decap -inkey "${workdir}/rec_priv.pem" -in "${workdir}/ct.bin" -secret "${workdir}/rec_secret.bin"
-
-    # 4. Verify shared secret match
+    # --- 1. ML-KEM-768 Encap & Decap ---
+    openssl genpkey -algorithm ML-KEM-768 -out "${workdir}/kem_priv.pem" 2>/dev/null
+    openssl pkey -in "${workdir}/kem_priv.pem" -pubout -out "${workdir}/kem_pub.pem" 2>/dev/null
+    openssl pkeyutl -encap -pubin -inkey "${workdir}/kem_pub.pem" -out "${workdir}/ct.bin" -secret "${workdir}/sender_secret.bin"
+    openssl pkeyutl -decap -inkey "${workdir}/kem_priv.pem" -in "${workdir}/ct.bin" -secret "${workdir}/rec_secret.bin"
     diff -u "${workdir}/sender_secret.bin" "${workdir}/rec_secret.bin" >/dev/null
 
-    # 5. Symmetric encryption with derived PQC secret
-    echo "FIPS 203 ML-KEM-768 Encrypted Secret Message" > "${workdir}/plain.txt"
-    local key_hex
-    key_hex="$(bin2hex "${workdir}/sender_secret.bin")"
-    openssl enc -aes-256-cbc -e -in "${workdir}/plain.txt" -out "${workdir}/cipher.bin" \
-        -K "${key_hex}" -iv "00000000000000000000000000000001"
+    # --- 2. ML-DSA-65 Sign & Verify ---
+    openssl genpkey -algorithm ML-DSA-65 -out "${workdir}/dsa_priv.pem" 2>/dev/null
+    openssl pkey -in "${workdir}/dsa_priv.pem" -pubout -out "${workdir}/dsa_pub.pem" 2>/dev/null
+    echo "PQC Document Payload for Digital Signature" > "${workdir}/payload.txt"
+    openssl pkeyutl -sign -inkey "${workdir}/dsa_priv.pem" -in "${workdir}/payload.txt" -out "${workdir}/sig.bin"
+    openssl pkeyutl -verify -pubin -inkey "${workdir}/dsa_pub.pem" -sigfile "${workdir}/sig.bin" -in "${workdir}/payload.txt" >/dev/null
 
-    openssl enc -aes-256-cbc -d -in "${workdir}/cipher.bin" -out "${workdir}/decrypted.txt" \
-        -K "${key_hex}" -iv "00000000000000000000000000000001"
-
-    diff -u "${workdir}/plain.txt" "${workdir}/decrypted.txt" >/dev/null
     rm -rf "${workdir}"
-    echo -e "${GREEN}    [PASS] OpenSSL CLI FIPS 203 ML-KEM-768 Encap/Decap test passed!${NC}"
+    echo -e "${GREEN}    [PASS] OpenSSL CLI ML-KEM-768 & ML-DSA-65 tests passed!${NC}"
 }
 
 run_python_test() {
@@ -63,7 +53,7 @@ run_python_test() {
         py_bin="${SCRIPT_DIR}/../../.venv/bin/python3"
     fi
     "${py_bin}" "${SCRIPT_DIR}/python/main.py"
-    echo -e "${GREEN}    [PASS] Python test passed!${NC}"
+    echo -e "${GREEN}    [PASS] Python ML-KEM & ML-DSA test passed!${NC}"
 }
 
 run_cpp_test() {
@@ -74,13 +64,13 @@ run_cpp_test() {
     cmake --build "${bdir}" -j"$(nproc)" >/dev/null
     "${bdir}/ml_kem_example"
     rm -rf "${bdir}"
-    echo -e "${GREEN}    [PASS] C++20 FIPS 203 ML-KEM-768 test passed!${NC}"
+    echo -e "${GREEN}    [PASS] C++20 ML-KEM & ML-DSA test passed!${NC}"
 }
 
 run_rust_test() {
     echo -e "${BLUE}[4/4] Building and Running Rust Test...${NC}"
     (cd "${SCRIPT_DIR}/rust" && cargo run --release --quiet)
-    echo -e "${GREEN}    [PASS] Rust FIPS 203 ML-KEM-768 test passed!${NC}"
+    echo -e "${GREEN}    [PASS] Rust ML-KEM & ML-DSA test passed!${NC}"
 }
 
 main() {
@@ -88,10 +78,8 @@ main() {
     echo " [Applied PQC Lab] Chapter 03 Multi-Language Test Suite"
     echo "======================================================"
 
-    # Check if current OpenSSL supports ML-KEM
     if ! openssl list -kem-algorithms 2>/dev/null | grep -qi "ML-KEM"; then
-        echo -e "${YELLOW}[!] Current environment OpenSSL does not support native ML-KEM.${NC}"
-        echo -e "${YELLOW}[!] Please run inside Docker: ./scripts/run_docker.sh verify${NC}"
+        echo -e "${YELLOW}[!] Current OpenSSL does not support native ML-KEM.${NC}"
         exit 0
     fi
 

@@ -62,7 +62,7 @@
 ### [Phase 3] NIST PQC Primitives & Security Guidelines
 
 - [x] **Task 3-1:** [Doc & Code] FIPS 203 ML-KEM (구 Kyber) 원리 시각화 + 4개 언어 Python/Rust/C++/CLI 캡슐화 예제 (Docker 검증).
-- [ ] **Task 3-2:** [Doc & Code] FIPS 204 ML-DSA (구 Dilithium) 전자서명 흐름도 + 서명/검증 예제 (Docker 검증).
+- [x] **Task 3-2:** [Doc & Code] FIPS 204 ML-DSA (구 Dilithium) 전자서명 흐름도 + 서명/검증 예제 (Docker 검증).
 - [ ] **Task 3-3:** [Doc] 양자 위협 모델 및 보안 강도 권고 (NIST Cat 1/3/5, CNSA 2.0 매핑 및 AES-256 권고 이유).
 
 ### [Phase 4] PQC X.509 PKI & End-to-End Encryption

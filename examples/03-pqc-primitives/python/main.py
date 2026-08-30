@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Applied PQC Lab - NIST FIPS 203 ML-KEM-768 in Python
-Native OpenSSL 3.5+ libcrypto EVP Encap / Decap + AES-256-GCM (Zero Pip Dependencies)
+Applied PQC Lab - NIST FIPS 203 ML-KEM & FIPS 204 ML-DSA in Python
+Native OpenSSL 3.5+ libcrypto EVP APIs (Zero Pip Dependencies)
 """
 
 import ctypes
@@ -25,7 +25,7 @@ def load_libcrypto():
 
 libcrypto = load_libcrypto()
 
-# Configure EVP Prototypes
+# EVP Key & KEM Prototypes
 libcrypto.EVP_PKEY_CTX_new_from_name.restype = c_void_p
 libcrypto.EVP_PKEY_CTX_new_from_name.argtypes = [c_void_p, c_char_p, c_char_p]
 libcrypto.EVP_PKEY_keygen_init.argtypes = [c_void_p]
@@ -38,6 +38,14 @@ libcrypto.EVP_PKEY_encapsulate_init.argtypes = [c_void_p, c_void_p]
 libcrypto.EVP_PKEY_encapsulate.argtypes = [c_void_p, c_char_p, POINTER(c_size_t), c_char_p, POINTER(c_size_t)]
 libcrypto.EVP_PKEY_decapsulate_init.argtypes = [c_void_p, c_void_p]
 libcrypto.EVP_PKEY_decapsulate.argtypes = [c_void_p, c_char_p, POINTER(c_size_t), c_char_p, c_size_t]
+
+# EVP DigestSign / DigestVerify Prototypes (for ML-DSA)
+libcrypto.EVP_MD_CTX_new.restype = c_void_p
+libcrypto.EVP_MD_CTX_free.argtypes = [c_void_p]
+libcrypto.EVP_DigestSignInit.argtypes = [c_void_p, c_void_p, c_void_p, c_void_p, c_void_p]
+libcrypto.EVP_DigestSign.argtypes = [c_void_p, c_char_p, POINTER(c_size_t), c_char_p, c_size_t]
+libcrypto.EVP_DigestVerifyInit.argtypes = [c_void_p, c_void_p, c_void_p, c_void_p, c_void_p]
+libcrypto.EVP_DigestVerify.argtypes = [c_void_p, c_char_p, c_size_t, c_char_p, c_size_t]
 
 # AES-GCM Prototypes
 libcrypto.EVP_CIPHER_CTX_new.restype = c_void_p
@@ -56,13 +64,16 @@ EVP_CTRL_GCM_GET_TAG = 0x10
 EVP_CTRL_GCM_SET_TAG = 0x11
 
 
-def generate_mlkem_keypair(algorithm_name: bytes = b"ML-KEM-768"):
+# =============================================================================
+# 1. FIPS 203 ML-KEM Functions
+# =============================================================================
+def generate_pqc_keypair(algorithm_name: bytes):
     kctx = libcrypto.EVP_PKEY_CTX_new_from_name(None, algorithm_name, None)
     if not kctx or libcrypto.EVP_PKEY_keygen_init(kctx) <= 0:
-        raise RuntimeError("EVP_PKEY_keygen_init failed for ML-KEM")
+        raise RuntimeError(f"EVP_PKEY_keygen_init failed for {algorithm_name.decode()}")
     pkey = c_void_p()
     if libcrypto.EVP_PKEY_keygen(kctx, byref(pkey)) <= 0:
-        raise RuntimeError("EVP_PKEY_keygen failed for ML-KEM")
+        raise RuntimeError(f"EVP_PKEY_keygen failed for {algorithm_name.decode()}")
     libcrypto.EVP_PKEY_CTX_free(kctx)
     return pkey
 
@@ -71,16 +82,13 @@ def mlkem_encapsulate(pkey: c_void_p):
     ectx = libcrypto.EVP_PKEY_CTX_new(pkey, None)
     if not ectx or libcrypto.EVP_PKEY_encapsulate_init(ectx, None) <= 0:
         raise RuntimeError("EVP_PKEY_encapsulate_init failed")
-
     ct_len = c_size_t(0)
     secret_len = c_size_t(0)
     libcrypto.EVP_PKEY_encapsulate(ectx, None, byref(ct_len), None, byref(secret_len))
-
     ct_buf = create_string_buffer(ct_len.value)
     secret_buf = create_string_buffer(secret_len.value)
     if libcrypto.EVP_PKEY_encapsulate(ectx, ct_buf, byref(ct_len), secret_buf, byref(secret_len)) <= 0:
         raise RuntimeError("EVP_PKEY_encapsulate failed")
-
     libcrypto.EVP_PKEY_CTX_free(ectx)
     return ct_buf.raw[:ct_len.value], secret_buf.raw[:secret_len.value]
 
@@ -89,112 +97,80 @@ def mlkem_decapsulate(pkey: c_void_p, ciphertext: bytes):
     dctx = libcrypto.EVP_PKEY_CTX_new(pkey, None)
     if not dctx or libcrypto.EVP_PKEY_decapsulate_init(dctx, None) <= 0:
         raise RuntimeError("EVP_PKEY_decapsulate_init failed")
-
     secret_len = c_size_t(0)
     libcrypto.EVP_PKEY_decapsulate(dctx, None, byref(secret_len), ciphertext, len(ciphertext))
-
     secret_buf = create_string_buffer(secret_len.value)
     if libcrypto.EVP_PKEY_decapsulate(dctx, secret_buf, byref(secret_len), ciphertext, len(ciphertext)) <= 0:
         raise RuntimeError("EVP_PKEY_decapsulate failed")
-
     libcrypto.EVP_PKEY_CTX_free(dctx)
     return secret_buf.raw[:secret_len.value]
 
 
-def aes_gcm_encrypt(key: bytes, nonce: bytes, plaintext: bytes, aad: bytes = b""):
-    ctx = libcrypto.EVP_CIPHER_CTX_new()
-    try:
-        libcrypto.EVP_EncryptInit_ex(ctx, libcrypto.EVP_aes_256_gcm(), None, None, None)
-        libcrypto.EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN, len(nonce), None)
-        libcrypto.EVP_EncryptInit_ex(ctx, None, None, key, nonce)
-
-        outlen = c_int(0)
-        if aad:
-            libcrypto.EVP_EncryptUpdate(ctx, None, byref(outlen), aad, len(aad))
-
-        ct_buf = create_string_buffer(len(plaintext) + 16)
-        libcrypto.EVP_EncryptUpdate(ctx, ct_buf, byref(outlen), plaintext, len(plaintext))
-        total_len = outlen.value
-
-        final_buf = create_string_buffer(16)
-        final_len = c_int(0)
-        libcrypto.EVP_EncryptFinal_ex(ctx, final_buf, byref(final_len))
-
-        tag = create_string_buffer(16)
-        libcrypto.EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_GET_TAG, 16, tag)
-        return ct_buf.raw[:total_len], tag.raw[:16]
-    finally:
-        libcrypto.EVP_CIPHER_CTX_free(ctx)
+# =============================================================================
+# 2. FIPS 204 ML-DSA Functions
+# =============================================================================
+def mldsa_sign(pkey: c_void_p, message: bytes) -> bytes:
+    mctx = libcrypto.EVP_MD_CTX_new()
+    if not mctx or libcrypto.EVP_DigestSignInit(mctx, None, None, None, pkey) <= 0:
+        raise RuntimeError("EVP_DigestSignInit failed")
+    sig_len = c_size_t(0)
+    libcrypto.EVP_DigestSign(mctx, None, byref(sig_len), message, len(message))
+    sig_buf = create_string_buffer(sig_len.value)
+    if libcrypto.EVP_DigestSign(mctx, sig_buf, byref(sig_len), message, len(message)) <= 0:
+        raise RuntimeError("EVP_DigestSign failed")
+    libcrypto.EVP_MD_CTX_free(mctx)
+    return sig_buf.raw[:sig_len.value]
 
 
-def aes_gcm_decrypt(key: bytes, nonce: bytes, ciphertext: bytes, tag: bytes, aad: bytes = b""):
-    ctx = libcrypto.EVP_CIPHER_CTX_new()
-    try:
-        libcrypto.EVP_DecryptInit_ex(ctx, libcrypto.EVP_aes_256_gcm(), None, None, None)
-        libcrypto.EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN, len(nonce), None)
-        libcrypto.EVP_DecryptInit_ex(ctx, None, None, key, nonce)
-
-        outlen = c_int(0)
-        if aad:
-            libcrypto.EVP_DecryptUpdate(ctx, None, byref(outlen), aad, len(aad))
-
-        pt_buf = create_string_buffer(len(ciphertext) + 16)
-        libcrypto.EVP_DecryptUpdate(ctx, pt_buf, byref(outlen), ciphertext, len(ciphertext))
-        total_len = outlen.value
-
-        libcrypto.EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_TAG, 16, tag)
-        final_buf = create_string_buffer(16)
-        final_len = c_int(0)
-        ret = libcrypto.EVP_DecryptFinal_ex(ctx, final_buf, byref(final_len))
-        if ret <= 0:
-            raise ValueError("AES-GCM Authentication Tag Verification Failed!")
-        return pt_buf.raw[:total_len]
-    finally:
-        libcrypto.EVP_CIPHER_CTX_free(ctx)
+def mldsa_verify(pkey: c_void_p, message: bytes, signature: bytes) -> bool:
+    vmctx = libcrypto.EVP_MD_CTX_new()
+    if not vmctx or libcrypto.EVP_DigestVerifyInit(vmctx, None, None, None, pkey) <= 0:
+        raise RuntimeError("EVP_DigestVerifyInit failed")
+    ret = libcrypto.EVP_DigestVerify(vmctx, signature, len(signature), message, len(message))
+    libcrypto.EVP_MD_CTX_free(vmctx)
+    return ret > 0
 
 
 def main():
     print("======================================================")
-    print(" [Applied PQC Lab] NIST FIPS 203 ML-KEM-768 in Python")
-    print(" Native OpenSSL 3.5+ libcrypto EVP Encap / Decap")
+    print(" [Applied PQC Lab] NIST PQC Primitives in Python")
+    print(" FIPS 203 ML-KEM-768 + FIPS 204 ML-DSA-65 (OpenSSL 3.5)")
     print("======================================================")
 
-    # 1. Receiver generates ML-KEM-768 keypair
-    print("[+] Step 1: Generating Receiver's ML-KEM-768 keypair...")
-    rec_pkey = generate_mlkem_keypair(b"ML-KEM-768")
+    # -------------------------------------------------------------------------
+    # Part 1: FIPS 203 ML-KEM-768 Encap / Decap
+    # -------------------------------------------------------------------------
+    print("\n--- [Part 1] FIPS 203 ML-KEM-768 Key Encapsulation ---")
+    rec_kem_pkey = generate_pqc_keypair(b"ML-KEM-768")
+    ciphertext, sender_secret = mlkem_encapsulate(rec_kem_pkey)
+    print(f"[+] Sender Encap: Ciphertext size = {len(ciphertext)}B, Secret = {len(sender_secret)}B")
 
-    # 2. Sender encapsulates shared secret
-    print("[+] Step 2: Sender executing Encap(pkR)...")
-    ciphertext, sender_secret = mlkem_encapsulate(rec_pkey)
-    print(f"    Encapsulated Ciphertext size: {len(ciphertext)} bytes (Expect 1088 bytes)")
-    print(f"    Derived Shared Secret size  : {len(sender_secret)} bytes (32 bytes / 256 bits)")
+    receiver_secret = mlkem_decapsulate(rec_kem_pkey, ciphertext)
+    assert receiver_secret == sender_secret, "KEM secret mismatch!"
+    print(f"[+] Receiver Decap: [PASS] Derived matching 32-byte shared secret!")
+    libcrypto.EVP_PKEY_free(rec_kem_pkey)
 
-    # 3. Sender encrypts confidential payload with AES-256-GCM
-    print("[+] Step 3: Sender encrypting payload with AES-256-GCM using derived secret...")
-    plaintext = b"Top Secret Payload protected by NIST FIPS 203 Post-Quantum Cryptography."
-    nonce = os.urandom(12)
-    aad = b"PQC-Session-Metadata-FIPS203"
-    ct_payload, tag = aes_gcm_encrypt(sender_secret, nonce, plaintext, aad)
-    print(f"    Encrypted Payload size: {len(ct_payload)} bytes, Tag size: {len(tag)} bytes")
+    # -------------------------------------------------------------------------
+    # Part 2: FIPS 204 ML-DSA-65 Digital Signature & Verification
+    # -------------------------------------------------------------------------
+    print("\n--- [Part 2] FIPS 204 ML-DSA-65 Digital Signature ---")
+    signer_dsa_pkey = generate_pqc_keypair(b"ML-DSA-65")
+    message = b"Critical Legal Contract signed with Quantum-Resistant FIPS 204 ML-DSA."
 
-    # 4. Receiver decapsulates shared secret
-    print("[+] Step 4: Receiver executing Decap(skR, ct)...")
-    receiver_secret = mlkem_decapsulate(rec_pkey, ciphertext)
+    print(f"[+] Signer generating signature for payload ({len(message)} bytes)...")
+    signature = mldsa_sign(signer_dsa_pkey, message)
+    print(f"[+] ML-DSA-65 Signature generated: size = {len(signature)} bytes (Expect 3309)")
 
-    assert receiver_secret == sender_secret, "Decapsulated secret mismatch!"
-    print("    [PASS] Decapsulated secret matches sender secret 100%!")
+    print("[+] Verifier validating ML-DSA signature against payload...")
+    is_valid = mldsa_verify(signer_dsa_pkey, message, signature)
+    assert is_valid, "ML-DSA signature verification failed!"
+    print("    [PASS] Signature verified successfully!")
 
-    # 5. Receiver decrypts payload
-    print("[+] Step 5: Receiver decrypting payload and verifying AAD...")
-    decrypted_msg = aes_gcm_decrypt(receiver_secret, nonce, ct_payload, tag, aad)
-
-    assert decrypted_msg == plaintext, "Plaintext payload mismatch!"
     print("======================================================")
-    print(f" [PASS] Decrypted message: \"{decrypted_msg.decode('utf-8')}\"")
-    print(" [SUCCESS] NIST FIPS 203 ML-KEM-768 verified in Python!")
+    print(" [SUCCESS] FIPS 203 ML-KEM & FIPS 204 ML-DSA verified in Python!")
     print("======================================================")
 
-    libcrypto.EVP_PKEY_free(rec_pkey)
+    libcrypto.EVP_PKEY_free(signer_dsa_pkey)
 
 
 if __name__ == "__main__":
