@@ -67,8 +67,8 @@
 
 ### [Phase 4] PQC X.509 PKI & End-to-End Encryption
 
-- [ ] **Task 4-1:** [Script & Doc] OpenSSL 3.5 네이티브 CLI 기반 PKI 발급 자동화 스크립트 (`run_pki.sh`: ML-DSA Root CA, ML-KEM 수신자 인증서 발급).
-- [ ] **Task 4-2:** [Code & Test] 인증서 검증 -> ML-KEM 공개키 추출 -> HPKE AES-256-GCM 암/복호화 E2E 통합 테스트 (Rust & C++, Docker 검증).
+- [x] **Task 4-1:** [Script & Doc] OpenSSL 3.5 네이티브 CLI 기반 PKI 발급 자동화 스크립트 (`run_pki.sh`: ML-DSA Root CA, ML-KEM 수신자 인증서 발급).
+- [x] **Task 4-2:** [Code & Test] 인증서 검증 -> ML-KEM 공개키 추출 -> AES-256-GCM 암/복호화 4개 언어(Python/Rust/C++/CLI) E2E 통합 테스트 (Docker 검증).
 
 ### [Phase 5] PQC TLS 1.3 / mTLS Hands-on
 

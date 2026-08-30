@@ -1,0 +1,9 @@
+[package]
+name = "pqc_x509_rust"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+openssl = "0.10"
+openssl-sys = "0.9"
+foreign-types = "0.3"
