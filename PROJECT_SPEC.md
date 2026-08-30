@@ -56,8 +56,8 @@
 
 ### [Phase 2] Classical Hybrid Encryption vs RFC 9180 HPKE
 
-- [x] **Task 2-1:** [Doc & Code] 고전 대칭키 + 비대칭 Key Wrapping 방식의 구조와 한계 (문서 한/영 + Docker 내 C++/Rust 예제 실행).
-- [ ] **Task 2-2:** [Doc & Code] RFC 9180 HPKE 아키텍처 (KEM/KDF/AEAD 프레임워크 흐름도 + Docker 내 HPKE Base 모드 동작 검증 코드).
+- [x] **Task 2-1:** [Doc & Code] 고전 대칭키 + 비대칭 Key Wrapping 방식의 구조와 한계 (문서 한/영 + 4개 언어 Python/Rust/C++/CLI 예제 및 Docker E2E 실행).
+- [x] **Task 2-2:** [Doc & Code] RFC 9180 HPKE 아키텍처 (KEM/KDF/AEAD 프레임워크 흐름도 + 4개 언어 Python/Rust/C++/CLI Base 모드 동작 검증 코드).
 
 ### [Phase 3] NIST PQC Primitives & Security Guidelines
 
