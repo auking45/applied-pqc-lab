@@ -21,13 +21,13 @@ flowchart LR
 
 ## 📚 로드맵 개요
 
-| 파트 | 주제 | 핵심 내용 |
-| :--- | :--- | :--- |
-| **01. Classical Hybrid** | 고전 하이브리드 암호 | RSA / ECIES 키 래핑 방식의 구조와 한계 |
-| **02. Modern HPKE** | RFC 9180 HPKE | KEM + KDF + AEAD 모듈형 아키텍처 및 Base 모드 |
-| **03. PQC Primitives** | NIST 표준 PQC 원시 암호 | FIPS 203 ML-KEM (구 Kyber) 및 FIPS 204 ML-DSA (구 Dilithium) |
-| **04. PQC PKI & X.509** | 양자내성 공개키 인프라 | ML-DSA Root CA 발급 및 ML-KEM 수신자 인증서 연동 |
-| **05. PQC TLS & mTLS** | PQC TLS 1.3 핸즈온 | OpenSSL 3.5 네이티브 기반 ML-DSA / ML-KEM mTLS 통신 |
+| 파트                     | 주제                    | 핵심 내용                                                    |
+| :----------------------- | :---------------------- | :----------------------------------------------------------- |
+| **01. Classical Hybrid** | 고전 하이브리드 암호    | RSA / ECIES 키 래핑 방식의 구조와 한계                       |
+| **02. Modern HPKE**      | RFC 9180 HPKE           | KEM + KDF + AEAD 모듈형 아키텍처 및 Base 모드                |
+| **03. PQC Primitives**   | NIST 표준 PQC 원시 암호 | FIPS 203 ML-KEM (구 Kyber) 및 FIPS 204 ML-DSA (구 Dilithium) |
+| **04. PQC PKI & X.509**  | 양자내성 공개키 인프라  | ML-DSA Root CA 발급 및 ML-KEM 수신자 인증서 연동             |
+| **05. PQC TLS & mTLS**   | PQC TLS 1.3 핸즈온      | OpenSSL 3.5 네이티브 기반 ML-DSA / ML-KEM mTLS 통신          |
 
 ---
 
@@ -56,8 +56,7 @@ flowchart LR
     #include <iostream>
 
     int main() {
-        std::cout << "Welcome to Applied PQC Lab!
-";
+        std::cout << "Welcome to Applied PQC Lab!" << std::endl;
         return 0;
     }
     ```
